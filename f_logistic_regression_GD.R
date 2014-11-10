@@ -2,7 +2,9 @@
 # 
 # Author: g.guida
 ###############################################################################
-
+sigmoid <- function(z) {
+	return(1/(1 + exp(-z)));
+}
 
 f_logistic_regression_GD.R <- function(X, Y, alpha, lambda, iterations, error_treshold) {
 	
@@ -13,33 +15,33 @@ f_logistic_regression_GD.R <- function(X, Y, alpha, lambda, iterations, error_tr
 	#THETA is a matrix with one column and rows equal to the number of features
 	THETA = matrix(0, features_number, 1)
 	
-	error_tracking <- vector(mode = "double", length = iterations); #measure the error according to 
-	error_tracking[1] <- 0;
+	cost_tracking <- vector(mode = "double", length = iterations); #measure the error according to 
+	cost_tracking[1] <- 0;
 	
 	delta_error = 99; #inizialization at a random high value
 	
-	#for (i in 1:iterations && delta_error > error_treshold) {
-	for (i in 1:iterations) {
+	#for (i in 1:iterations) {
+	i <- 1;
+	while (i<=iterations) { #&& (delta_error >= error_treshold) ) {
 		
-		exponent <- t(t(THETA) %*% t(X))
-		hipothesis = y <- 1 / (1+exp(exponent));
-		error = ( (Y - log(hipothesis)) + ((1-Y)*log(1-hipothesis)));
-		#error = hipothesis - Y;
+		hipothesis <- 1/(1 + exp(-(X %*% THETA)));
 		
-		sse = -1 * (sum(error)/(itemset_length));
-		error_tracking[i] <- sse;
-		
-		#error_tracking[i] <- sse;
-		if (i==1) { delta_error <- sse; }
-		else { delta_error <- abs(sse - error_tracking[i-1]); }
-		
-		
+		#calculating the new coeficients
 		for (j in 1:features_number ) {
-			res = error * X[ ,j];
-			temp_theta[j] = THETA[j]-( sum(res)*alpha );
+			res = (hipothesis - Y) * X[ ,j];
+			temp_theta[j] = THETA[j] - alpha*sum(res);
 		}
 		
+		#calculating the error
+		cost = -1/itemset_length * sum( Y*log(hipothesis) + (1-Y)*log(1-hipothesis) );
+		cost_tracking[i] <- cost;
+		
+		if (i==1) { delta_error <- cost; }
+		else { delta_error <- abs(cost - cost_tracking[i-1]); }
+		
 		THETA <- rep(temp_theta);
+		
+		i<-i+1;
 	}
 	
 	print(THETA[1]);
@@ -47,8 +49,5 @@ f_logistic_regression_GD.R <- function(X, Y, alpha, lambda, iterations, error_tr
 	print(THETA[3]);
 	
 	#returning results
-	return_list <- list("theta"=THETA, "error_tracking" = error_tracking);
-	return(return_list);
-	
-	
+	return(list("theta"=THETA, "cost_tracking"=cost_tracking));	
 }

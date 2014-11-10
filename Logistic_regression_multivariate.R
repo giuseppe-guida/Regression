@@ -30,22 +30,16 @@ legend("topright", pch = 20, col = c("blue", "red"), legend = c("Admitted", "Not
 m <- do.call(cbind, ex2);
 summary(m);
 ones <- matrix(1, nrow(m), 1);
-X <- cbind(ones, m);
-colnames(X) = c("ones", "score1", "score2", "adm");
+M <- cbind(ones, m);
+colnames(M) = c("ones", "score1", "score2", "adm");
 
-alpha = 0.001;
-iterations = 100;
-error_treshold = 0.0001;
+alpha = 0.0000001;
+iterations = 1500;
+error_treshold = 0.01;
 
-gdm <- f_logistic_regression_GD.R(X[,-4], X[4], alpha, lambda, iterations, error_treshold)
+gdm <- f_logistic_regression_GD.R(M[,-4], M[4], alpha, lambda, iterations, error_treshold)
 
-forecast <- (gdm$theta[1] + gdm$theta[2]*X[,"Pop"] + gdm$theta[2]*X[,"Type"] );
-
-par(mfrow = c(1, 2), pch = 20)
-plot(1:iterations, gdm$error_tracking, main = "Error");
-plot(X[,"Pop"], forecast, main = "Forecasts")
-
-
-
-
-
+forecast <- (gdm$theta[1] + gdm$theta[2]*M[,"score1"] + gdm$theta[3]*M[,"score2"] );
+classification <- ifelse(forecast>0, 1, 0);
+#error
+plot(1:iterations, gdm$cost_tracking, main = "Cost function");
