@@ -26,14 +26,14 @@ f_logistic_regression_GD.R <- function(X, Y, alpha, lambda, iterations, error_tr
 		
 		hipothesis <- 1/(1 + exp(-(X %*% THETA)));
 		
-		#calculating the new coeficients for each feature
+		#calculating the new coeficients
 		for (j in 1:features_number ) {
 			res = (hipothesis - Y) * X[ ,j];
 			temp_theta[j] = THETA[j] - alpha*sum(res);
 		}
 		
 		#calculating the error
-		cost = 1/itemset_length * sum( -Y*log(hipothesis) - (1-Y)*log(1-hipothesis) );
+		cost = -1/itemset_length * sum( Y*log(hipothesis) + (1-Y)*log(1-hipothesis) );
 		cost_tracking[i] <- cost;
 		
 		if (i==1) { delta_error <- cost; }
