@@ -3,9 +3,7 @@
 
 rm(list=ls()); #clear memeory
 
-library("lattice");
 source("C:/Users/g.guida/workspace/Regression/f_logistic_regression_GD.R"); #if the function is located in the r workspace directory
-
 
 #Loading a file
 file = "C:/Users/g.guida/workspace/Regression/ex2data1.txt";
@@ -42,4 +40,4 @@ gdm <- f_logistic_regression_GD.R(M[,-4], M[4], alpha, lambda, iterations, error
 forecast <- (gdm$theta[1] + gdm$theta[2]*M[,"score1"] + gdm$theta[3]*M[,"score2"] );
 classification <- ifelse(forecast>0, 1, 0);
 #error
-plot(1:iterations, gdm$cost_tracking, main = "Cost function");
+plot(1:iterations, gdm$cost_tracking, main = "Cost function", type="l");
